@@ -20,8 +20,13 @@ def compute_utility(board, color):
 # Better heuristic value of board
 def compute_heuristic(board, color): #not implemented, optional
     #IMPLEMENT
-    return 0 #change this!
+    P1, P2 = get_score(board)
+    if color == 1:
+        dif = P1 - P2
+    else:
+        dif = P2 - P1
 
+    return dif
 ############ MINIMAX ###############################
 def minimax_min_node(board, color, limit, caching = 0):
     #IMPLEMENT (and replace the line below)
