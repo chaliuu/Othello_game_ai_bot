@@ -50,12 +50,14 @@ def minimax_min_node(board, color, limit, caching):
     min_val = float("inf")
 
     if (limit == 0) or (pos_movs == []): 
-        terminal_return = (None, compute_utility(board, color))
-
-        if caching == 1:
-            #cache utililty value for terminal state
-            cached_states[cache_key] = terminal_return
-        return terminal_return
+       terminal_return = (None, compute_utility(board, color))
+       #return None, compute_utility(board, color)
+       if caching == 1 and limit == 0:
+            #cache utililty value for terminal state 
+            cached_states[str((board, color, limit))] = terminal_return
+       return terminal_return
+       
+   
     
     for move in pos_movs:
         nxt_board = play_move(board, color, move[0], move[1])
@@ -78,6 +80,7 @@ def minimax_max_node(board, color, limit, caching): #returns highest possible ut
 
     if caching == 1 and  cache_key in cached_states:
         return cached_states[cache_key]
+    
 
     pos_movs = get_possible_moves(board, color)
     best_move = None
@@ -85,9 +88,10 @@ def minimax_max_node(board, color, limit, caching): #returns highest possible ut
 
     if (limit == 0) or (pos_movs == []):   
         terminal_return = (None, compute_utility(board, color))
-        if caching == 1:
-            #cache utililty value for terminal state
-            cached_states[cache_key] = terminal_return
+        #return None, compute_utility(board, color)
+        if caching == 1 and limit == 0:
+            #cache utililty value for terminal state 
+            cached_states[str((board, color, limit))] = terminal_return
         return terminal_return
     
     for move in pos_movs:
