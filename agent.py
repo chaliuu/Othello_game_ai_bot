@@ -9,6 +9,8 @@ import time
 # You can use the functions in othello_shared to write your AI
 from othello_shared import find_lines, get_possible_moves, get_score, play_move
 
+state_cache = {}
+
 def eprint(*args, **kwargs): #you can use this for debugging, as it will print to sterr and not stdout
     print(*args, file=sys.stderr, **kwargs)
     
@@ -31,14 +33,25 @@ def compute_heuristic(board, color): #not implemented, optional
     
 
 ############ MINIMAX ###############################
-def minimax_min_node(board, color, limit, caching = 0):
+def minimax_min_node(board, color, limit, caching):
     #IMPLEMENT (and replace the line below)
+    global state_cache
+
+    cache_key = str((board, color, limit))
+
+    if caching == 1 and cache_key in state_cache:
+        return state_cache[cache_key]
+
     pos_movs = get_possible_moves(board, color)
     best_move = None
     min_val = float("inf")
 
-    if limit == 0 or len(pos_movs) == 0:
-        return (None, compute_utility(board, color))
+    if limit == 0 or len(pos_movs) == 0: 
+        util_val = (None, compute_utility(board, color))
+        if caching == 1:
+            #cache utililty value for terminal state
+            state_cache[cache_key] = util_val
+        return util_val
     
     for move in pos_movs:
         nxt_board = play_move(board, color, move[0], move[1])
@@ -47,28 +60,47 @@ def minimax_min_node(board, color, limit, caching = 0):
             min_val = curr_val
             best_move = move
     
+    if caching == 1:
+        #cacheing for non-terminal states
+        state_cache[cache_key] = (best_move, min_val)
+
     return (best_move, min_val)
 
-def minimax_max_node(board, color, limit, caching = 0): #returns highest possible utility
+def minimax_max_node(board, color, limit, caching): #returns highest possible utility
     #IMPLEMENT (and replace the line below)
+    global state_cache
+    
+    cache_key = str((board, color, limit))
+
+    if caching == 1 and  cache_key in state_cache:
+        return state_cache[cache_key]
+
     pos_movs = get_possible_moves(board, color)
     best_move = None
     max_val = float("-inf")
 
-    if limit == 0 or len(pos_movs) == 0:
-        return (None, compute_utility(board, color))
+    if limit == 0 or len(pos_movs) == 0:   
+        util_val = (None, compute_utility(board, color))
+        if caching == 1:
+            #cache utililty value for terminal state
+            state_cache[cache_key] = util_val
+        return util_val
     
     for move in pos_movs:
         nxt_board = play_move(board, color, move[0], move[1])
-        curr_move, curr_val = minimax_min_node(nxt_board, 3- color, limit - 1, caching)
+        curr_move, curr_val = minimax_max_node(nxt_board, 3 - color, limit - 1, caching)
         if curr_val > max_val:
             max_val = curr_val
             best_move = move
     
+    if caching == 1:
+        #cacheing for non-terminal states
+        state_cache[cache_key] = (best_move, max_val)
+
     return (best_move, max_val)
         
 
-def select_move_minimax(board, color, limit, caching = 0):
+def select_move_minimax(board, color, limit, caching):
     """
     Given a board and a player color, decide on a move. 
     The return value is a tuple of integers (i,j), where
@@ -82,7 +114,6 @@ def select_move_minimax(board, color, limit, caching = 0):
     If caching is OFF (i.e. 0), do NOT use state caching to reduce the number of state evaluations.    
     """
     #IMPLEMENT (and replace the line below)
-
     return minimax_max_node(board, color, limit, caching)[0]
 
 ############ ALPHA-BETA PRUNING #####################
