@@ -15,11 +15,6 @@ def eprint(*args, **kwargs): #you can use this for debugging, as it will print t
 # Method to compute utility value of terminal state
 def compute_utility(board, color):
     #IMPLEMENT
-    return 0 #change this!
-
-# Better heuristic value of board
-def compute_heuristic(board, color): #not implemented, optional
-    #IMPLEMENT
     P1, P2 = get_score(board)
     if color == 1:
         dif = P1 - P2
@@ -27,14 +22,51 @@ def compute_heuristic(board, color): #not implemented, optional
         dif = P2 - P1
 
     return dif
+
+# Better heuristic value of board
+def compute_heuristic(board, color): #not implemented, optional
+    #IMPLEMENT
+
+    return 0 # change this
+    
+
 ############ MINIMAX ###############################
 def minimax_min_node(board, color, limit, caching = 0):
     #IMPLEMENT (and replace the line below)
-    return ((0,0),0)
+    pos_movs = get_possible_moves(board, color)
+    best_move = None
+    min_val = float("inf")
+
+    if limit == 0 or len(pos_movs) == 0:
+        return (None, compute_utility(board, color))
+    
+    for move in pos_movs:
+        nxt_board = play_move(board, color, move[0], move[1])
+        curr_move, curr_val = minimax_max_node(nxt_board, 3 - color, limit - 1, caching)
+        if curr_val < min_val:
+            min_val = curr_val
+            best_move = move
+    
+    return (best_move, min_val)
 
 def minimax_max_node(board, color, limit, caching = 0): #returns highest possible utility
     #IMPLEMENT (and replace the line below)
-    return ((0,0),0)
+    pos_movs = get_possible_moves(board, color)
+    best_move = None
+    max_val = float("-inf")
+
+    if limit == 0 or len(pos_movs) == 0:
+        return (None, compute_utility(board, color))
+    
+    for move in pos_movs:
+        nxt_board = play_move(board, color, move[0], move[1])
+        curr_move, curr_val = minimax_min_node(nxt_board, 3- color, limit - 1, caching)
+        if curr_val > max_val:
+            max_val = curr_val
+            best_move = move
+    
+    return (best_move, max_val)
+        
 
 def select_move_minimax(board, color, limit, caching = 0):
     """
@@ -50,7 +82,8 @@ def select_move_minimax(board, color, limit, caching = 0):
     If caching is OFF (i.e. 0), do NOT use state caching to reduce the number of state evaluations.    
     """
     #IMPLEMENT (and replace the line below)
-    return (0,0) #change this!
+
+    return minimax_max_node(board, color, limit, caching)[0]
 
 ############ ALPHA-BETA PRUNING #####################
 def alphabeta_min_node(board, color, alpha, beta, limit, caching = 0, ordering = 0):
