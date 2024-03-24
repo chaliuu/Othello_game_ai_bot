@@ -133,7 +133,7 @@ def order_moves(board, moves, color, maximizing_player):
     sorted_moves = [move_eval[0] for move_eval in move_evals]
     return sorted_moves
 
-def alphabeta_min_node(board, color, alpha, beta, limit, caching, ordering = 0):
+def alphabeta_min_node(board, color, alpha, beta, limit, caching, ordering):
     #IMPLEMENT (and replace the line below)
     global cached_states
 
@@ -164,7 +164,7 @@ def alphabeta_min_node(board, color, alpha, beta, limit, caching, ordering = 0):
 
     return best_move, beta
 
-def alphabeta_max_node(board, color, alpha, beta, limit, caching, ordering = 0):
+def alphabeta_max_node(board, color, alpha, beta, limit, caching, ordering):
     #IMPLEMENT (and replace the line below)
     global cached_states
     
