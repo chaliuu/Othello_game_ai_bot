@@ -194,7 +194,7 @@ def alphabeta_max_node(board, color, alpha, beta, limit, caching, ordering):
 
     return best_move, alpha
 
-def select_move_alphabeta(board, color, limit, caching = 0, ordering = 0):
+def select_move_alphabeta(board, color, limit, caching, ordering):
     """
     Given a board and a player color, decide on a move. 
     The return value is a tuple of integers (i,j), where
