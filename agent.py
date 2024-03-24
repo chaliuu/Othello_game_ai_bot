@@ -1,5 +1,7 @@
 """
 An AI player for Othello. 
+
+Note: OpenAI's ChatGPT aided in the drafting of this code
 """
 
 import random
